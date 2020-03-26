@@ -11,7 +11,6 @@ Parameters:
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
   --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
   --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
-  DOCKER_TAG
 
 All parameters above can also be passed in via environment or .env file. In this case use uppercase-lowdash syntax
 
