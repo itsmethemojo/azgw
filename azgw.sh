@@ -9,6 +9,8 @@ Parameters:
   --azure-email             [PROMPTED] azure account email for the login
   --azure-password          [PROMPTED] azure account password
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
+  --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
+  --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
 
 All parameters above can also be passed in via environment or .env file. In this case use uppercase-lowdash syntax
 
@@ -17,10 +19,13 @@ Example: export GANGWAY_URL=https://gangway.mydomain
 With [PROMPTED] marked parametes will be prompted when not given in on any other way.
 "
 PATH_GANGWAY_KUBECONFIG=/tmp/GANGWAY_KUBECONFIG
-DOCKER_IMAGE=itsmethemojo/azgw
 
 read_key_value_line () {
-  KEY_VALUE_LINE=$1
+  KEY_VALUE_LINE="$1"
+  if [ "$(echo ${KEY_VALUE_LINE} | xargs )" == "" ];
+  then
+    return 0
+  fi
   # if cli parameter cut off leading --
   if [ "$(echo ${KEY_VALUE_LINE} | cut -c -2 )" == "--" ];
   then
@@ -29,7 +34,7 @@ read_key_value_line () {
   KEY=$(echo "${KEY_VALUE_LINE}" | awk -F'=' '{print $1}' | tr  '[:lower:]' '[:upper:]' | tr '-' '_')
   if [ "${KEY}" == "HELP" ];
   then
-    echo -e "$HELP_TEXT"
+    echo -e "${HELP_TEXT}"
     exit 1
   fi
   VALUE=$(echo "${KEY_VALUE_LINE}" | awk '{sub(/=/,"§")}1' | awk -F'§' '{print $2}')
@@ -39,15 +44,15 @@ read_key_value_line () {
 # read .env
 if [ -f .env ];
 then
-  while read -r dot_env_line; do
-    read_key_value_line "$dot_env_line"
+  while read -r DOT_ENV_LINE; do
+    read_key_value_line "${DOT_ENV_LINE}"
   done < ".env"
 fi
 
 # read cli parameters
-for cli_param in "$@"
+for CLI_PARAM in "$@"
 do
-  read_key_value_line "$cli_param"
+  read_key_value_line "${CLI_PARAM}"
 done
 
 # ask for still missing parameters
@@ -65,24 +70,36 @@ if [[ -z "${AZURE_PASSWORD}" ]];
 then
   read -sp 'AZURE_PASSWORD=' AZURE_PASSWORD
 fi
+echo ""
+
+# set default values
 
 if [[ -z "${DOCKER_RUN_OPTIONS}" ]];
 then
   DOCKER_RUN_OPTIONS=""
 fi
-echo ""
 
-# TODO this should be removed when automatic build are in place
-# TODO add option to use local build container
-docker build -t ${DOCKER_IMAGE} . > /dev/null 2>&1
+if [[ -z "${DOCKER_TAG}" ]];
+then
+  DOCKER_TAG="latest"
+fi
+
+USED_IMAGE="itsmethemojo/azgw:${DOCKER_TAG}"
+
+if [[ "${LOCAL_BUILD}" == "true" ]];
+then
+  USED_IMAGE="itsmethemojo/azgw-local:latest"
+  docker build -t ${USED_IMAGE} .
+fi
+
 docker run \
 ${DOCKER_RUN_OPTIONS} \
 -e "AZURE_EMAIL=${AZURE_EMAIL}" \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
 -e "GANGWAY_URL=${GANGWAY_URL}" \
-${DOCKER_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
+${USED_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
 
-if [ "grep 'BEGIN CERTIFICATE' $PATH_GANGWAY_KUBECONFIG | wc -l" == "0" ];
+if [ "grep 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG} | wc -l" == "0" ];
 then
   echo -e "something went wrong\n\n"
   cat ${PATH_GANGWAY_KUBECONFIG}
