@@ -12,7 +12,7 @@ azgw uses [puppeteer](https://github.com/puppeteer/puppeteer/) in a docker conta
 
 ```
 # download
-wget https://raw.githubusercontent.com/itsmethemojo/azgw/master/README.md
+wget https://raw.githubusercontent.com/itsmethemojo/azgw/master/azgw.sh
 # make executable
 chmod +x azgw.sh
 # run
