@@ -1,2 +1,20 @@
 # azgw
-cli tool to retrieve kubectl by loggin with azure AD and heptio gangway
+cli tool to retrieve kubectl config by login with azure AD and heptio gangway
+
+azgw uses [puppeteer](https://github.com/puppeteer/puppeteer/) in a docker container to do the whole login process in a headless chrome browser for you
+
+## Requirements
+
+* [docker](https://hub.docker.com/?overlay=onboarding)
+* [git bash](https://gitforwindows.org/) (only on windows)
+
+## get started
+
+```
+# download
+wget https://raw.githubusercontent.com/itsmethemojo/azgw/master/README.md
+# make executable
+chmod +x azgw.sh
+# run
+./azgw.sh --help
+```
