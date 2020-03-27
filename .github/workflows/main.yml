@@ -15,3 +15,6 @@ jobs:
 
     - name: test
       run: ./ci.sh test
+
+    - name: lint-bash
+      run: ./ci.sh lint-bash

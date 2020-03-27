@@ -16,6 +16,10 @@ case "$1" in
   tests/bats/bin/bats tests/tests.bats
   exit $?
   ;;
+"lint-bash")
+  docker run -v "$(pwd)":/app/ -w /app koalaman/shellcheck-alpine shellcheck ./*.sh
+  exit $?
+  ;;
 "clear")
   rm -rf tests/bats tests/debug
   exit 0
