@@ -66,6 +66,7 @@ Commands:
   lint-bash                 lints bash scripts
   lint-js                   lints javascript files
   fix-js                    lints and auto-fixes javascript files
+  clear                     removes temporary artefacts
 "
 echo -e "${HELP_TEXT}"
 exit 0
