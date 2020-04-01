@@ -11,6 +11,7 @@ Parameters:
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
   --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
   --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
+  --debug-input             [OPTIONAL] if set to 'true' prints out all parameters that will be given to the puppeteer container
 
 All parameters above can also be passed in via environment or .env file. In this case use uppercase-lowdash syntax
 
@@ -35,9 +36,14 @@ read_key_value_line () {
   if [ "${KEY}" == "HELP" ];
   then
     echo -e "${HELP_TEXT}"
-    exit 1
+    exit 0
   fi
   VALUE=$(echo "${KEY_VALUE_LINE}" | awk '{sub(/=/,"§")}1' | awk -F'§' '{print $2}')
+  if [ "${VALUE}" == "" ];
+  then
+    echo -e "given parameter ${KEY} is empty"
+    exit 1
+  fi
   export ${KEY}="${VALUE}"
 }
 
@@ -92,11 +98,19 @@ then
   docker build -t ${USED_IMAGE} .
 fi
 
+if [[ ! -z "${DEBUG_INPUT}" ]];
+then
+  echo "GANGWAY_URL=${GANGWAY_URL}"
+  echo "AZURE_EMAIL=${AZURE_EMAIL}"
+  echo "AZURE_PASSWORD=${AZURE_PASSWORD}"
+  exit 0
+fi
+
 docker run \
 ${DOCKER_RUN_OPTIONS} \
+-e "GANGWAY_URL=${GANGWAY_URL}" \
 -e "AZURE_EMAIL=${AZURE_EMAIL}" \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
--e "GANGWAY_URL=${GANGWAY_URL}" \
 ${USED_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
 
 if [ "grep 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG} | wc -l" == "0" ];

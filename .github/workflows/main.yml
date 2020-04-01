@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: prepare test
+      run:  git clone --depth 1 https://github.com/sstephenson/bats.git tests/bats &> /dev/null && chmod -R +x tests/bats
+
+    - name: test
+      run: ./ci.sh test
