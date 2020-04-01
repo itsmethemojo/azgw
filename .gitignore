@@ -1,5 +1,6 @@
 /.env
 /.env.backup
+/node_modules/
 /tests/debug/
 /tests/bats/
 /tests/shellcheck-stable

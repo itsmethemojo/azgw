@@ -16,6 +16,8 @@ jobs:
     - name: lint bash scripts
       run: ./ci.sh lint-bash
 
+    - name: lint javascript
+      run: ./ci.sh lint-js
   test:
     runs-on: ubuntu-latest
     steps:
