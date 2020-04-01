@@ -40,7 +40,7 @@ case "$1" in
     echo "INFO skip npm install"
   fi
   docker run -it --rm -w /app -v "$(pwd)":/app cytopia/eslint src/*.js
-  exit 0
+  exit $?
   ;;
 "fix-js")
   if [ ! -d node_modules ];
@@ -51,7 +51,7 @@ case "$1" in
     echo "INFO skip npm install"
   fi
   docker run -it --rm -w /app -v "$(pwd)":/app cytopia/eslint --fix src/*.js
-  exit 0
+  exit $?
   ;;
 "clear")
   rm -rf tests/bats tests/debug tests/shellcheck-stable node_modules
