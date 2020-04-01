@@ -35,22 +35,22 @@ case "$1" in
   if [ ! -d node_modules ];
   then
     echo "INFO npm install"
-    docker run -it --rm --entrypoint npm -w /app -v "$(pwd)":/app node install
+    docker run --rm --entrypoint npm -w /app -v "$(pwd)":/app node install
   else
     echo "INFO skip npm install"
   fi
-  docker run -it --rm -w /app -v "$(pwd)":/app cytopia/eslint src/*.js
+  docker run --rm -w /app -v "$(pwd)":/app cytopia/eslint src/*.js
   exit $?
   ;;
 "fix-js")
   if [ ! -d node_modules ];
   then
     echo "INFO npm install"
-    docker run -it --rm --entrypoint npm -w /app -v "$(pwd)":/app node install
+    docker run --rm --entrypoint npm -w /app -v "$(pwd)":/app node install
   else
     echo "INFO skip npm install"
   fi
-  docker run -it --rm -w /app -v "$(pwd)":/app cytopia/eslint --fix src/*.js
+  docker run --rm -w /app -v "$(pwd)":/app cytopia/eslint --fix src/*.js
   exit $?
   ;;
 "clear")
