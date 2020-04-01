@@ -23,12 +23,12 @@ PATH_GANGWAY_KUBECONFIG=/tmp/GANGWAY_KUBECONFIG
 
 read_key_value_line () {
   KEY_VALUE_LINE="$1"
-  if [ "$(echo ${KEY_VALUE_LINE} | xargs )" == "" ];
+  if [ "$(echo "${KEY_VALUE_LINE}" | xargs )" == "" ];
   then
     return 0
   fi
   # if cli parameter cut off leading --
-  if [ "$(echo ${KEY_VALUE_LINE} | cut -c -2 )" == "--" ];
+  if [ "$(echo "${KEY_VALUE_LINE}" | cut -c -2 )" == "--" ];
   then
     KEY_VALUE_LINE="$(echo "${KEY_VALUE_LINE}" | cut -c 3- )"
   fi
@@ -44,7 +44,7 @@ read_key_value_line () {
     echo -e "given parameter ${KEY} is empty"
     exit 1
   fi
-  export ${KEY}="${VALUE}"
+  export "${KEY}"="${VALUE}"
 }
 
 # read .env
@@ -64,17 +64,20 @@ done
 # ask for still missing parameters
 if [[ -z "${GANGWAY_URL}" ]];
 then
-  read -p 'GANGWAY_URL=' GANGWAY_URL
+  # shellcheck disable=SC2162
+  read -p "GANGWAY_URL=" GANGWAY_URL
 fi
 
 if [[ -z "${AZURE_EMAIL}" ]];
 then
-  read -p 'AZURE_EMAIL=' AZURE_EMAIL
+  # shellcheck disable=SC2162
+  read -p "AZURE_EMAIL=" AZURE_EMAIL
 fi
 
 if [[ -z "${AZURE_PASSWORD}" ]];
 then
-  read -sp 'AZURE_PASSWORD=' AZURE_PASSWORD
+  # shellcheck disable=SC2162
+  read -sp "AZURE_PASSWORD=" AZURE_PASSWORD
 fi
 echo ""
 
@@ -98,7 +101,7 @@ then
   docker build -t ${USED_IMAGE} .
 fi
 
-if [[ ! -z "${DEBUG_INPUT}" ]];
+if [[ -n "${DEBUG_INPUT}" ]];
 then
   echo "GANGWAY_URL=${GANGWAY_URL}"
   echo "AZURE_EMAIL=${AZURE_EMAIL}"
@@ -106,6 +109,7 @@ then
   exit 0
 fi
 
+# shellcheck disable=SC2086
 docker run \
 ${DOCKER_RUN_OPTIONS} \
 -e "GANGWAY_URL=${GANGWAY_URL}" \
@@ -113,7 +117,7 @@ ${DOCKER_RUN_OPTIONS} \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
 ${USED_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
 
-if [ "grep 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG} | wc -l" == "0" ];
+if [ "$(grep -c 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG})" == "0" ];
 then
   echo -e "something went wrong\n\n"
   cat ${PATH_GANGWAY_KUBECONFIG}

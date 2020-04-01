@@ -5,13 +5,24 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
-    - name: prepare test
+    - name: prepare
+      run:  cd tests && wget -qO- 'https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz' | tar -xJ && chmod -R +x shellcheck-stable
+
+    - name: lint bash scripts
+      run: ./ci.sh lint-bash
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: prepare
       run:  git clone --depth 1 https://github.com/sstephenson/bats.git tests/bats &> /dev/null && chmod -R +x tests/bats
 
-    - name: test
+    - name: test bash script
       run: ./ci.sh test
