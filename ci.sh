@@ -17,11 +17,22 @@ case "$1" in
   exit $?
   ;;
 "lint-bash")
-  docker run -v "$(pwd)":/app/ -w /app koalaman/shellcheck-alpine shellcheck ./*.sh
+  if [ ! -d tests/shellcheck-stable ];
+  then
+    echo "INFO downloading shellcheck"
+    docker run -v "$(pwd)":/app -w /app buildpack-deps:stretch bash -c "
+    cd /app/tests &&
+    wget -qO- 'https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz' | tar -xJ &&
+    chmod -R 777 /app/tests/shellcheck-stable
+    "
+  else
+    echo "INFO skip downloading shellcheck"
+  fi
+  tests/shellcheck-stable/shellcheck ./*.sh
   exit $?
   ;;
 "clear")
-  rm -rf tests/bats tests/debug
+  rm -rf tests/bats tests/debug tests/shellcheck-stable
   exit 0
   ;;
 esac

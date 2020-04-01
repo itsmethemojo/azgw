@@ -64,17 +64,20 @@ done
 # ask for still missing parameters
 if [[ -z "${GANGWAY_URL}" ]];
 then
-  read -p 'GANGWAY_URL=' GANGWAY_URL
+  # shellcheck disable=SC2162
+  read -p "GANGWAY_URL=" GANGWAY_URL
 fi
 
 if [[ -z "${AZURE_EMAIL}" ]];
 then
-  read -p 'AZURE_EMAIL=' AZURE_EMAIL
+  # shellcheck disable=SC2162
+  read -p "AZURE_EMAIL=" AZURE_EMAIL
 fi
 
 if [[ -z "${AZURE_PASSWORD}" ]];
 then
-  read -sp 'AZURE_PASSWORD=' AZURE_PASSWORD
+  # shellcheck disable=SC2162
+  read -sp "AZURE_PASSWORD=" AZURE_PASSWORD
 fi
 echo ""
 

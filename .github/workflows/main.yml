@@ -16,5 +16,8 @@ jobs:
     - name: test
       run: ./ci.sh test
 
+    - name: prepare lint-bash
+      run:  cd tests && wget -qO- 'https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz' | tar -xJ && chmod -R +x tests/shellcheck-stable
+
     - name: lint-bash
       run: ./ci.sh lint-bash
