@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const url = process.env.GANGWAY_URL
 const email = process.env.AZURE_EMAIL
-const password = process.env.AZURE_PASSWORD
+const password =process.env.AZURE_PASSWORD
 // eslint-disable-next-line no-unused-vars
 const login = (async () => {
   const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
