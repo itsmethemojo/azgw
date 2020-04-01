@@ -1,0 +1,29 @@
+{
+  "name": "azgw",
+  "version": "0.0.1",
+  "description": "azgw",
+  "main": "src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "./ci.sh test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsmethemojo/azgw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itsmethemojo/azgw/issues"
+  },
+  "homepage": "https://github.com/itsmethemojo/azgw#readme",
+  "devDependencies": {
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
