@@ -36,7 +36,7 @@ read_key_value_line () {
   if [ "${KEY}" == "HELP" ];
   then
     echo -e "${HELP_TEXT}"
-    exit 1
+    exit 0
   fi
   VALUE=$(echo "${KEY_VALUE_LINE}" | awk '{sub(/=/,"§")}1' | awk -F'§' '{print $2}')
   if [ "${VALUE}" == "" ];

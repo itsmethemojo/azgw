@@ -21,4 +21,4 @@ Commands:
   test                      runs test suite with bats
 "
 echo -e "${HELP_TEXT}"
-exit 1
+exit 0

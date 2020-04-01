@@ -15,7 +15,7 @@ function teardown {
 
 @test "azgw --help" {
   run ./azgw.sh --help
-  [ "$status" -eq 1 ]
+  [ "$status" -eq 0 ]
   [ "$(echo $output | grep -c 'Usage: azgw \[OPTIONS\]')" = "1" ]
 }
 
