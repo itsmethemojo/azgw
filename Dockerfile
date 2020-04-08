@@ -1,6 +1,6 @@
 FROM buildkite/puppeteer:v1.15.0
 
-COPY src/index.js /app/
+COPY src/index.js src/default_config.json /app/
 
 WORKDIR /app
 

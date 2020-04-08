@@ -8,6 +8,7 @@ Parameters:
   --gangway-url             [PROMPTED] url of the gangway server
   --azure-email             [PROMPTED] azure account email for the login
   --azure-password          [PROMPTED] azure account password
+  --azgw-config             [OPTIONAL] json string to override several selectors TODO link documentation
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
   --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
   --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
@@ -110,11 +111,12 @@ then
 fi
 
 # shellcheck disable=SC2086
-docker run \
+docker run --rm \
 ${DOCKER_RUN_OPTIONS} \
 -e "GANGWAY_URL=${GANGWAY_URL}" \
 -e "AZURE_EMAIL=${AZURE_EMAIL}" \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
+-e "AZGW_CONFIG=${AZGW_CONFIG}" \
 ${USED_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
 
 if [ "$(grep -c 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG})" == "0" ];

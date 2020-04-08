@@ -1,0 +1,10 @@
+{
+  "debug": false,
+  "selector_login_with_azure_button": ".dex-btn-icon.dex-btn-icon--microsoft",
+  "selector_azure_email_input_field": "#i0116",
+  "selector_azure_password_input_field": "input[type=password]",
+  "selector_kubernetes_code_blocks": "code.language-bash",
+  "result_index_kubernetes_code_blocks": 2,
+  "default_wait_for_selector_timeout": 5000,
+  "default_wait_for_navigation_timeout": 10000
+}
