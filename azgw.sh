@@ -10,6 +10,7 @@ Parameters:
   --azure-password          [PROMPTED] azure account password
   --puppeteer-config        [OPTIONAL] json string to override several selectors or timeouts. available values https://github.com/itsmethemojo/azgw/blob/master/src/default_config.json
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
+  --lookup                  [OPTIONAL] comma separated list of domains, to be resolved with nslookup and given in as --add-host parameter into the puppeteer container
   --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
   --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
   --debug-input             [OPTIONAL] if set to 'true' prints out all parameters that will be given to the puppeteer container
@@ -102,6 +103,22 @@ then
   docker build -t ${USED_IMAGE} .
 fi
 
+LOOKED_UP_HOSTS=""
+
+if [[ -n "${LOOKUP}" ]];
+then
+  for DOMAIN_TO_LOOKUP in $(echo "${LOOKUP}" | tr ',' ' ')
+  do
+    IPV4=$(nslookup "${DOMAIN_TO_LOOKUP}" | grep -e '^Address: [0-9\.]\+$' | cut -c 10-)
+    if [[ "${IPV4}" == "" ]];
+    then
+      echo "could not find IPv4 with: nslookup ${DOMAIN_TO_LOOKUP}"
+      exit 1
+    fi
+    LOOKED_UP_HOSTS="${LOOKED_UP_HOSTS} --add-host=${DOMAIN_TO_LOOKUP}:${IPV4}"
+  done
+fi
+
 if [[ -n "${DEBUG_INPUT}" ]];
 then
   echo "GANGWAY_URL=${GANGWAY_URL}"
@@ -114,6 +131,7 @@ fi
 # shellcheck disable=SC2086
 docker run --rm \
 ${DOCKER_RUN_OPTIONS} \
+${LOOKED_UP_HOSTS} \
 -e "GANGWAY_URL=${GANGWAY_URL}" \
 -e "AZURE_EMAIL=${AZURE_EMAIL}" \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
