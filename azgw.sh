@@ -112,7 +112,7 @@ then
     IPV4=$(nslookup "${DOMAIN_TO_LOOKUP}" | grep -e '^Address: [0-9\.]\+$' | cut -c 10-)
     if [[ "${IPV4}" == "" ]];
     then
-      echo "could not find IPV4 with: nslookup ${DOMAIN_TO_LOOKUP}"
+      echo "could not find IPv4 with: nslookup ${DOMAIN_TO_LOOKUP}"
       exit 1
     fi
     LOOKED_UP_HOSTS="${LOOKED_UP_HOSTS} --add-host=${DOMAIN_TO_LOOKUP}:${IPV4}"

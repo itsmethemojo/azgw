@@ -68,5 +68,5 @@ function teardown {
 @test "fail with unsuccessful lookup" {
   run echo $(echo -e "url#\nemail#\npassword#" | ./azgw.sh --debug-input=true --lookup=this.domain.does.not.exist.xcnsdnfljrwem; echo FINAL_EXIT_CODE=$?)
   [ "$(echo $output | grep -c 'FINAL_EXIT_CODE=1')" = "1" ]
-  [ "$(echo $output | grep -c 'could not find IPV4 with: nslookup ')" = "1" ]
+  [ "$(echo $output | grep -c 'could not find IPv4 with: nslookup ')" = "1" ]
 }
