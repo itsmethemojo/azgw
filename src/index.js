@@ -1,32 +1,49 @@
 const puppeteer = require('puppeteer')
+const fs = require('fs')
+const path = require('path')
 const url = process.env.GANGWAY_URL
 const email = process.env.AZURE_EMAIL
 const password = process.env.AZURE_PASSWORD
+var overrideConfig
+try {
+  overrideConfig = JSON.parse(process.env.PUPPETEER_CONFIG)
+} catch (exception) {
+  overrideConfig = {}
+}
+const baseConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'default_config.json'), 'utf8'))
+const config = Object.assign(baseConfig, overrideConfig)
+
 // eslint-disable-next-line no-unused-vars
 const login = (async () => {
   const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
   const page = await browser.newPage()
   await page.goto(url + '/login')
-  const azureLoginIcon = '.dex-btn-icon.dex-btn-icon--microsoft'
-  await page.waitForSelector(azureLoginIcon)
+  const azureLoginIcon = config.selector_login_with_azure_button
+  await page.waitForSelector(azureLoginIcon, { timeout: config.default_wait_for_selector_timeout })
   await page.click(azureLoginIcon)
-  await page.waitForNavigation({ waitUntil: 'networkidle2' })
-  await page.waitForSelector('#i0116')
-  const emailInputField = await page.$('#i0116')
+  await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: config.default_wait_for_navigation_timeout })
+  await page.waitForSelector(config.selector_azure_email_input_field, { timeout: config.default_wait_for_selector_timeout })
+  const emailInputField = await page.$(config.selector_azure_email_input_field)
   await emailInputField.type(email)
   await emailInputField.press('Enter')
   await page.waitFor(2000)
-  await page.waitForSelector('input[type=password]')
-  const passwordInputField = await page.$('input[type=password]')
+  await page.waitForSelector(config.selector_azure_password_input_field, { timeout: config.default_wait_for_selector_timeout })
+  const passwordInputField = await page.$(config.selector_azure_password_input_field)
   await passwordInputField.type(password)
   await passwordInputField.press('Enter')
-  await page.waitForNavigation({ waitUntil: 'networkidle2' })
-  const codeBoxesSelector = 'div.code-toolbar'
+  await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: config.default_wait_for_navigation_timeout })
+  const codeBoxesSelector = config.selector_kubernetes_code_blocks
   const codeBoxes = await page.evaluate((selector) => {
     const codeBoxesNodeList = document.querySelectorAll(selector)
     const anchors = [...codeBoxesNodeList]
     return anchors.map(element => element.innerHTML)
   }, codeBoxesSelector)
-  console.log(codeBoxes[1].replace(/<\/?[^>]+(>|$)/g, '').replace(/ {3}Copy/g, '').replace(/&gt;/, '>'))
+  if (typeof codeBoxes !== 'undefined' && codeBoxes.length >= config.result_index_kubernetes_code_blocks) {
+    console.log(codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'))
+  } else {
+    const bodyHandle = await page.$('body')
+    const html = await page.evaluate(body => body.innerHTML, bodyHandle)
+    console.log(html)
+  }
   await browser.close()
 })()

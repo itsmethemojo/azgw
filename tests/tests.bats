@@ -43,12 +43,13 @@ function teardown {
   [ "$(echo $output | grep -c 'AZURE_PASSWORD=password#')" = "1" ]
 }
 
-@test "1 cli parameter, 1 env parameter, 1 .env entry" {
-  run echo $(export AZURE_EMAIL=email# && ./azgw.sh --debug-input=true --gangway-url=url# && echo FINAL_EXIT_CODE=$?)
+@test "1 cli parameter, 1 env parameter, 1 .env entry, 1 prompt" {
+  run echo $(export AZURE_EMAIL=email# && echo -e "password#" | ./azgw.sh --debug-input=true --gangway-url=url# && echo FINAL_EXIT_CODE=$?)
   [ "$(echo $output | grep -c 'FINAL_EXIT_CODE=0')" = "1" ]
   [ "$(echo $output | grep -c 'GANGWAY_URL=url#')" = "1" ]
   [ "$(echo $output | grep -c 'AZURE_EMAIL=email#')" = "1" ]
   [ "$(echo $output | grep -c 'AZURE_PASSWORD=password#')" = "1" ]
+  [ "$(echo $output | grep -c 'PUPPETEER_CONFIG={}')" = "1" ]
 }
 
 @test ".env overrides env parameter, cli overrides .env parameter" {
