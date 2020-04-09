@@ -59,3 +59,14 @@ function teardown {
   [ "$(echo $output | grep -c 'AZURE_EMAIL=dotenv#')" = "1" ]
   [ "$(echo $output | grep -c 'AZURE_PASSWORD=cli#')" = "1" ]
 }
+
+@test "proceed with successful lookup" {
+  run echo $(echo -e "url#\nemail#\npassword#" | ./azgw.sh --debug-input=true --lookup=github.com && echo FINAL_EXIT_CODE=$?)
+  [ "$(echo $output | grep -c 'FINAL_EXIT_CODE=0')" = "1" ]
+}
+
+@test "fail with unsuccessful lookup" {
+  run echo $(echo -e "url#\nemail#\npassword#" | ./azgw.sh --debug-input=true --lookup=this.domain.does.not.exist.xcnsdnfljrwem; echo FINAL_EXIT_CODE=$?)
+  [ "$(echo $output | grep -c 'FINAL_EXIT_CODE=1')" = "1" ]
+  [ "$(echo $output | grep -c 'could not find IPV4 with: nslookup ')" = "1" ]
+}
