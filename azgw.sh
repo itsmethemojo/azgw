@@ -8,7 +8,7 @@ Parameters:
   --gangway-url             [PROMPTED] url of the gangway server
   --azure-email             [PROMPTED] azure account email for the login
   --azure-password          [PROMPTED] azure account password
-  --azgw-config             [OPTIONAL] json string to override several selectors TODO link documentation
+  --puppeteer-config        [OPTIONAL] json string to override several selectors or timeouts. available values https://github.com/itsmethemojo/azgw/blob/master/src/default_config.json
   --docker-run-options      [OPTIONAL] pass in additional docker run options like --add-host
   --local-build             [OPTIONAL] if set to 'true' the needed docker image will be build locally from sources
   --docker-tag              [OPTIONAL] set a specific tag of the itsmethemojo/azgw image to be used
@@ -107,6 +107,7 @@ then
   echo "GANGWAY_URL=${GANGWAY_URL}"
   echo "AZURE_EMAIL=${AZURE_EMAIL}"
   echo "AZURE_PASSWORD=${AZURE_PASSWORD}"
+  echo "PUPPETEER_CONFIG=${PUPPETEER_CONFIG}"
   exit 0
 fi
 
@@ -116,7 +117,7 @@ ${DOCKER_RUN_OPTIONS} \
 -e "GANGWAY_URL=${GANGWAY_URL}" \
 -e "AZURE_EMAIL=${AZURE_EMAIL}" \
 -e "AZURE_PASSWORD=${AZURE_PASSWORD}" \
--e "AZGW_CONFIG=${AZGW_CONFIG}" \
+-e "PUPPETEER_CONFIG=${PUPPETEER_CONFIG}" \
 ${USED_IMAGE} > ${PATH_GANGWAY_KUBECONFIG}
 
 if [ "$(grep -c 'BEGIN CERTIFICATE' ${PATH_GANGWAY_KUBECONFIG})" == "0" ];
