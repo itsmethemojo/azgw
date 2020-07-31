@@ -4,8 +4,8 @@ const path = require('path')
 const url = process.env.GANGWAY_URL
 const email = process.env.AZURE_EMAIL
 const password = process.env.AZURE_PASSWORD
+const write_to_file = 'OUTPUT_FILE' in process.env
 const output_file = process.env.OUTPUT_FILE
-const write_to_file = output_file !== ""
 var overrideConfig
 try {
   overrideConfig = JSON.parse(process.env.PUPPETEER_CONFIG)
