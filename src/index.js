@@ -4,8 +4,8 @@ const path = require('path')
 const url = process.env.GANGWAY_URL
 const email = process.env.AZURE_EMAIL
 const password = process.env.AZURE_PASSWORD
-const write_to_file = 'OUTPUT_FILE' in process.env
-const output_file = process.env.OUTPUT_FILE
+const writeToFile = 'OUTPUT_FILE' in process.env
+const outputFile = process.env.OUTPUT_FILE
 var overrideConfig
 try {
   overrideConfig = JSON.parse(process.env.PUPPETEER_CONFIG)
@@ -41,19 +41,17 @@ const login = (async () => {
     return anchors.map(element => element.innerHTML)
   }, codeBoxesSelector)
   if (typeof codeBoxes !== 'undefined' && codeBoxes.length >= config.result_index_kubernetes_code_blocks) {
-    if(write_to_file){
-      fs.writeFileSync(output_file, codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'), 'utf8')
-    }
-    else{
+    if (writeToFile) {
+      fs.writeFileSync(outputFile, codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'), 'utf8')
+    } else {
       console.log(codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'))
     }
   } else {
     const bodyHandle = await page.$('body')
     const html = await page.evaluate(body => body.innerHTML, bodyHandle)
-    if(write_to_file){
-      fs.writeFileSync(output_file, html, 'utf8')
-    }
-    else{
+    if (writeToFile) {
+      fs.writeFileSync(outputFile, html, 'utf8')
+    } else {
       console.log(html)
     }
   }
