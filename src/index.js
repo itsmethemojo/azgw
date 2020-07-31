@@ -4,6 +4,8 @@ const path = require('path')
 const url = process.env.GANGWAY_URL
 const email = process.env.AZURE_EMAIL
 const password = process.env.AZURE_PASSWORD
+const writeToFile = 'OUTPUT_FILE' in process.env
+const outputFile = process.env.OUTPUT_FILE
 var overrideConfig
 try {
   overrideConfig = JSON.parse(process.env.PUPPETEER_CONFIG)
@@ -39,11 +41,20 @@ const login = (async () => {
     return anchors.map(element => element.innerHTML)
   }, codeBoxesSelector)
   if (typeof codeBoxes !== 'undefined' && codeBoxes.length >= config.result_index_kubernetes_code_blocks) {
-    console.log(codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'))
+    const pageContent = codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>')
+    if (writeToFile) {
+      fs.writeFileSync(outputFile, pageContent, 'utf8')
+    } else {
+      console.log(pageContent)
+    }
   } else {
     const bodyHandle = await page.$('body')
     const html = await page.evaluate(body => body.innerHTML, bodyHandle)
-    console.log(html)
+    if (writeToFile) {
+      fs.writeFileSync(outputFile, html, 'utf8')
+    } else {
+      console.log(html)
+    }
   }
   await browser.close()
 })()
