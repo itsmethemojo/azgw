@@ -41,10 +41,11 @@ const login = (async () => {
     return anchors.map(element => element.innerHTML)
   }, codeBoxesSelector)
   if (typeof codeBoxes !== 'undefined' && codeBoxes.length >= config.result_index_kubernetes_code_blocks) {
+    pageContent = codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>')
     if (writeToFile) {
-      fs.writeFileSync(outputFile, codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'), 'utf8')
+      fs.writeFileSync(outputFile, pageContent, 'utf8')
     } else {
-      console.log(codeBoxes[config.result_index_kubernetes_code_blocks - 1].replace(/&gt;/, '>'))
+      console.log(pageContent)
     }
   } else {
     const bodyHandle = await page.$('body')
